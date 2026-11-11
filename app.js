@@ -11,17 +11,20 @@ const stages = document.querySelectorAll("[data-phase]");
 const customTopicForm = document.querySelector("#custom-topic-form");
 const customTopicInput = document.querySelector("#custom-topic");
 const customTopicStatus = document.querySelector("#custom-topic-status");
+const resetProgressButton = document.querySelector("#reset-progress");
+const resetDialog = document.querySelector("#reset-dialog");
 const customTopicsStorageKey = "one-minute-speech.custom-topics";
 const drawProgressStorageKey = "one-minute-speech.draw-progress";
 
 const phases = {
+  waiting: { label: "等待抽题", button: "开始准备", hint: "准备 10 分钟，讲述 1 分钟", seconds: prepareSeconds },
   ready: { label: "可以开始", button: "开始准备", hint: "用 10 分钟查资料、理思路", seconds: prepareSeconds },
   prepare: { label: "准备中", button: "现在开讲", hint: "时间到后自动开始讲述", seconds: prepareSeconds },
   speak: { label: "讲述中", button: "结束讲述", hint: "用自己的话解释这个概念，可以举个例子", seconds: speakSeconds },
   done: { label: "本轮完成", button: "再抽一题", hint: "用一句话复盘，下次练习我想改进哪一步？", seconds: 0 }
 };
 
-let phase = "ready";
+let phase = "waiting";
 let previousTopic = "";
 let remainingTopics = [];
 let deadline = 0;
@@ -113,11 +116,12 @@ function setPhase(next, startAt = Date.now()) {
   const current = phases[next];
   phaseLabel.textContent = current.label;
   advance.textContent = current.button;
-  advance.disabled = false;
+  advance.disabled = next === "waiting";
   hint.textContent = current.hint;
-  draw.hidden = next !== "ready";
+  const activeStage = next === "waiting" ? "ready" : next;
+  draw.hidden = activeStage !== "ready";
   for (const stage of stages) {
-    if (stage.dataset.phase === next) stage.setAttribute("aria-current", "step");
+    if (stage.dataset.phase === activeStage) stage.setAttribute("aria-current", "step");
     else stage.removeAttribute("aria-current");
   }
 
@@ -165,6 +169,25 @@ function drawTopic() {
     hint.textContent += "。当前浏览器无法保存抽题进度。";
   }
 }
+
+resetProgressButton.addEventListener("click", () => {
+  resetDialog.returnValue = "";
+  resetDialog.showModal();
+});
+
+resetDialog.addEventListener("close", () => {
+  if (resetDialog.returnValue !== "reset") return;
+
+  previousTopic = "";
+  remainingTopics = [];
+  topic.textContent = "准备好了吗？";
+  draw.textContent = "随机抽题";
+  setPhase("waiting");
+  if (!saveDrawProgress()) {
+    hint.textContent += "。当前浏览器未能保存这次重置。";
+  }
+  draw.focus();
+});
 
 draw.addEventListener("click", drawTopic);
 advance.addEventListener("click", () => {

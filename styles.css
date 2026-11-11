@@ -182,9 +182,25 @@ button {
 
 .secondary[hidden] { display: none; }
 
-.custom-topics {
-  width: min(100%, 35rem);
+.practice-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.65rem;
   margin-top: 1rem;
+}
+
+.quiet-button {
+  color: #53584e;
+  background: transparent;
+  border-color: #afa594;
+}
+
+.quiet-button:hover { background: #ede6d8; }
+
+.custom-topics {
+  flex: 1 1 20rem;
+  max-width: 35rem;
   border: 1px solid #e2dbca;
   border-radius: 1rem;
   background: #fffcf5;
@@ -234,6 +250,30 @@ button {
 #custom-topic-status { margin: 0.6rem 0 0; }
 
 #custom-topic-status:empty { margin: 0; }
+
+.reset-dialog {
+  width: min(100% - 2rem, 25rem);
+  padding: 1.5rem;
+  border: 1px solid #e2dbca;
+  border-radius: 1rem;
+  color: inherit;
+  background: #fffcf5;
+}
+
+.reset-dialog::backdrop { background: rgb(37 43 33 / 50%); }
+
+.reset-dialog h2 { margin: 0; font-size: 1.25rem; }
+
+.reset-dialog p { margin: 0.65rem 0 1.25rem; color: #53584e; line-height: 1.55; }
+
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.dialog-actions button { width: auto; }
 
 @media (max-width: 40rem) {
   .practice { padding-top: 1.5rem; }
