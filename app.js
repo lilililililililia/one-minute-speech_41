@@ -18,7 +18,7 @@ const phases = {
   ready: { label: "可以开始", button: "开始准备", hint: "用 10 分钟查资料、理思路", seconds: prepareSeconds },
   prepare: { label: "准备中", button: "现在开讲", hint: "时间到后自动开始讲述", seconds: prepareSeconds },
   speak: { label: "讲述中", button: "结束讲述", hint: "用自己的话解释这个概念，可以举个例子", seconds: speakSeconds },
-  done: { label: "本轮完成", button: "再抽一题", hint: "回想一句你最想让听众记住的话", seconds: 0 }
+  done: { label: "本轮完成", button: "再抽一题", hint: "用一句话复盘，下次练习我想改进哪一步？", seconds: 0 }
 };
 
 let phase = "ready";
