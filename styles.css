@@ -251,7 +251,7 @@ button {
 
 #custom-topic-status:empty { margin: 0; }
 
-.reset-dialog {
+.practice-dialog {
   width: min(100% - 2rem, 25rem);
   padding: 1.5rem;
   border: 1px solid #e2dbca;
@@ -260,11 +260,11 @@ button {
   background: #fffcf5;
 }
 
-.reset-dialog::backdrop { background: rgb(37 43 33 / 50%); }
+.practice-dialog::backdrop { background: rgb(37 43 33 / 50%); }
 
-.reset-dialog h2 { margin: 0; font-size: 1.25rem; }
+.practice-dialog h2 { margin: 0; font-size: 1.25rem; }
 
-.reset-dialog p { margin: 0.65rem 0 1.25rem; color: #53584e; line-height: 1.55; }
+.practice-dialog p { margin: 0.65rem 0 1.25rem; color: #53584e; line-height: 1.55; }
 
 .dialog-actions {
   display: flex;

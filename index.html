@@ -57,13 +57,24 @@
       <button id="reset-progress" class="quiet-button" type="button">重置抽题进度</button>
     </div>
 
-    <dialog id="reset-dialog" class="reset-dialog" aria-labelledby="reset-title" aria-describedby="reset-description">
+    <dialog id="reset-dialog" class="practice-dialog" aria-labelledby="reset-title" aria-describedby="reset-description">
       <form method="dialog">
         <h2 id="reset-title">重置抽题进度？</h2>
         <p id="reset-description">重置会结束当前练习，并让已抽过的题重新参与抽取。你添加的题目会保留。</p>
         <div class="dialog-actions">
           <button class="quiet-button" type="submit" value="cancel" autofocus>取消</button>
           <button class="primary" type="submit" value="reset">确认重置</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="speech-dialog" class="practice-dialog" aria-labelledby="speech-title" aria-describedby="speech-description">
+      <form method="dialog">
+        <h2 id="speech-title">准备时间到</h2>
+        <p id="speech-description">准备好了就点「开始讲述」，开启 1 分钟倒计时。</p>
+        <div class="dialog-actions">
+          <button class="quiet-button" type="submit" value="later" autofocus>稍后开始</button>
+          <button class="primary" type="submit" value="start">开始讲述</button>
         </div>
       </form>
     </dialog>
