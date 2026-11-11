@@ -12,6 +12,7 @@ const customTopicForm = document.querySelector("#custom-topic-form");
 const customTopicInput = document.querySelector("#custom-topic");
 const customTopicStatus = document.querySelector("#custom-topic-status");
 const customTopicsStorageKey = "one-minute-speech.custom-topics";
+const drawProgressStorageKey = "one-minute-speech.draw-progress";
 
 const phases = {
   ready: { label: "可以开始", button: "开始准备", hint: "用 10 分钟查资料、理思路", seconds: prepareSeconds },
@@ -68,6 +69,32 @@ function loadCustomTopics() {
     if (typeof item !== "string") continue;
     const title = item.trim();
     if (isValidTopic(title)) addCustomTopic(title);
+  }
+}
+
+function loadDrawProgress() {
+  let saved;
+  try {
+    saved = JSON.parse(localStorage.getItem(drawProgressStorageKey) ?? "null");
+  } catch {
+    return;
+  }
+  if (typeof saved?.previousTopic !== "string" || !Array.isArray(saved.remainingTopics)) return;
+
+  const validTopics = new Set([...TOPICS, ...customTopics]);
+  previousTopic = validTopics.has(saved.previousTopic) ? saved.previousTopic : "";
+  validTopics.delete(previousTopic);
+  // Keep saved order while discarding removed titles and duplicate entries.
+  remainingTopics = saved.remainingTopics.filter((title) => validTopics.delete(title));
+}
+
+function saveDrawProgress() {
+  try {
+    const progress = { previousTopic, remainingTopics };
+    localStorage.setItem(drawProgressStorageKey, JSON.stringify(progress));
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -134,6 +161,9 @@ function drawTopic() {
   topic.textContent = previousTopic;
   draw.textContent = "换一道题";
   setPhase("ready");
+  if (!saveDrawProgress()) {
+    hint.textContent += "。当前浏览器无法保存抽题进度。";
+  }
 }
 
 draw.addEventListener("click", drawTopic);
@@ -149,6 +179,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 loadCustomTopics();
+loadDrawProgress();
 
 customTopicInput.addEventListener("input", () => {
   customTopicStatus.textContent = "";
@@ -171,6 +202,7 @@ customTopicForm.addEventListener("submit", (event) => {
   customTopicInput.value = "";
   try {
     localStorage.setItem(customTopicsStorageKey, JSON.stringify(customTopics));
+    if (previousTopic) saveDrawProgress();
     customTopicStatus.textContent = "已添加，会参与随机抽题。";
   } catch {
     customTopicStatus.textContent = "已加入本页。浏览器未能保存，刷新后需要重新添加。";
