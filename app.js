@@ -17,6 +17,7 @@ const phases = {
 
 let phase = "ready";
 let previousTopic = "";
+let remainingTopics = [];
 let deadline = 0;
 let ticker;
 function renderTime(remaining, total) {
@@ -60,9 +61,25 @@ function updateTime() {
   else if (phase === "speak") setPhase("done");
 }
 
+function shuffleTopics() {
+  const topics = [...TOPICS];
+  for (let index = topics.length - 1; index > 0; index--) {
+    const other = Math.floor(Math.random() * (index + 1));
+    [topics[index], topics[other]] = [topics[other], topics[index]];
+  }
+
+  // The next draw pops the last item, so keep it distinct across rounds.
+  const last = topics.length - 1;
+  if (last > 0 && topics[last] === previousTopic) {
+    const other = Math.floor(Math.random() * last);
+    [topics[last], topics[other]] = [topics[other], topics[last]];
+  }
+  return topics;
+}
+
 function drawTopic() {
-  const choices = TOPICS.length > 1 ? TOPICS.filter((item) => item !== previousTopic) : TOPICS;
-  previousTopic = choices[Math.floor(Math.random() * choices.length)];
+  if (remainingTopics.length === 0) remainingTopics = shuffleTopics();
+  previousTopic = remainingTopics.pop();
   topic.textContent = previousTopic;
   draw.textContent = "换一道题";
   setPhase("ready");
