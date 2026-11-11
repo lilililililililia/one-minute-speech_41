@@ -8,6 +8,11 @@ const countdown = document.querySelector("#countdown");
 const dial = document.querySelector("#dial");
 const hint = document.querySelector("#hint");
 const stages = document.querySelectorAll("[data-phase]");
+const customTopicForm = document.querySelector("#custom-topic-form");
+const customTopicInput = document.querySelector("#custom-topic");
+const customTopicStatus = document.querySelector("#custom-topic-status");
+const customTopicsStorageKey = "one-minute-speech.custom-topics";
+
 const phases = {
   ready: { label: "可以开始", button: "开始准备", hint: "用 10 分钟查资料、理思路", seconds: prepareSeconds },
   prepare: { label: "准备中", button: "现在开讲", hint: "时间到后自动开始讲述", seconds: prepareSeconds },
@@ -20,6 +25,52 @@ let previousTopic = "";
 let remainingTopics = [];
 let deadline = 0;
 let ticker;
+const customTopics = [];
+const topicKeys = new Set(TOPICS.map(topicKey));
+
+function normalizeTopic(title) {
+  return title.normalize("NFKC").toLowerCase().replace(/[\s\p{Dash_Punctuation}]+/gu, "");
+}
+
+function topicKey(title) {
+  const normalized = normalizeTopic(title);
+  const canonical = TOPIC_ALIASES.get(normalized);
+  return canonical === undefined ? normalized : normalizeTopic(canonical);
+}
+
+function isValidTopic(title) {
+  return title.length <= customTopicInput.maxLength && /[\p{L}\p{N}]/u.test(title);
+}
+
+function addCustomTopic(title) {
+  const key = topicKey(title);
+  if (topicKeys.has(key)) return false;
+
+  topicKeys.add(key);
+  customTopics.push(title);
+  if (previousTopic) {
+    const index = Math.floor(Math.random() * (remainingTopics.length + 1));
+    remainingTopics.splice(index, 0, title);
+  }
+  return true;
+}
+
+function loadCustomTopics() {
+  let saved;
+  try {
+    saved = JSON.parse(localStorage.getItem(customTopicsStorageKey) ?? "[]");
+  } catch {
+    return;
+  }
+  if (!Array.isArray(saved)) return;
+
+  for (const item of saved) {
+    if (typeof item !== "string") continue;
+    const title = item.trim();
+    if (isValidTopic(title)) addCustomTopic(title);
+  }
+}
+
 function renderTime(remaining, total) {
   const seconds = Math.ceil(remaining / 1000);
   const minutesPart = String(Math.floor(seconds / 60)).padStart(2, "0");
@@ -62,7 +113,7 @@ function updateTime() {
 }
 
 function shuffleTopics() {
-  const topics = [...TOPICS];
+  const topics = [...TOPICS, ...customTopics];
   for (let index = topics.length - 1; index > 0; index--) {
     const other = Math.floor(Math.random() * (index + 1));
     [topics[index], topics[other]] = [topics[other], topics[index]];
@@ -95,4 +146,33 @@ advance.addEventListener("click", () => {
 
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && (phase === "prepare" || phase === "speak")) updateTime();
+});
+
+loadCustomTopics();
+
+customTopicInput.addEventListener("input", () => {
+  customTopicStatus.textContent = "";
+});
+
+customTopicForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const title = customTopicInput.value.trim();
+  if (!isValidTopic(title)) {
+    customTopicStatus.textContent = "请输入一个题目名称，最多 40 字。";
+    return;
+  }
+
+  loadCustomTopics();
+  if (!addCustomTopic(title)) {
+    customTopicStatus.textContent = "这个题目已在题库中。";
+    return;
+  }
+
+  customTopicInput.value = "";
+  try {
+    localStorage.setItem(customTopicsStorageKey, JSON.stringify(customTopics));
+    customTopicStatus.textContent = "已添加，会参与随机抽题。";
+  } catch {
+    customTopicStatus.textContent = "已加入本页。浏览器未能保存，刷新后需要重新添加。";
+  }
 });
