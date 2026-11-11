@@ -13,13 +13,15 @@ const customTopicInput = document.querySelector("#custom-topic");
 const customTopicStatus = document.querySelector("#custom-topic-status");
 const resetProgressButton = document.querySelector("#reset-progress");
 const resetDialog = document.querySelector("#reset-dialog");
+const speechDialog = document.querySelector("#speech-dialog");
 const customTopicsStorageKey = "one-minute-speech.custom-topics";
 const drawProgressStorageKey = "one-minute-speech.draw-progress";
 
 const phases = {
-  waiting: { label: "等待抽题", button: "开始准备", hint: "准备 10 分钟，讲述 1 分钟", seconds: prepareSeconds },
+  waiting: { label: "等待抽题", button: "开始准备", hint: "准备 10 分钟，讲述 1 分钟", seconds: prepareSeconds, stage: "ready" },
   ready: { label: "可以开始", button: "开始准备", hint: "用 10 分钟查资料、理思路", seconds: prepareSeconds },
-  prepare: { label: "准备中", button: "现在开讲", hint: "时间到后自动开始讲述", seconds: prepareSeconds },
+  prepare: { label: "准备中", button: "现在开讲", hint: "时间到后会提醒你开始讲述", seconds: prepareSeconds },
+  awaitingSpeech: { label: "准备结束", button: "开始讲述", hint: "准备好了就开始 1 分钟讲述", seconds: 0, stage: "prepare" },
   speak: { label: "讲述中", button: "结束讲述", hint: "用自己的话解释这个概念，可以举个例子", seconds: speakSeconds },
   done: { label: "本轮完成", button: "再抽一题", hint: "用一句话复盘，下次练习我想改进哪一步？", seconds: 0 }
 };
@@ -29,6 +31,7 @@ let previousTopic = "";
 let remainingTopics = [];
 let deadline = 0;
 let ticker;
+let speechPromptPending = false;
 const customTopics = [];
 const topicKeys = new Set(TOPICS.map(topicKey));
 
@@ -113,12 +116,13 @@ function renderTime(remaining, total) {
 function setPhase(next, startAt = Date.now()) {
   clearInterval(ticker);
   phase = next;
+  speechPromptPending = next === "awaitingSpeech";
   const current = phases[next];
   phaseLabel.textContent = current.label;
   advance.textContent = current.button;
   advance.disabled = next === "waiting";
   hint.textContent = current.hint;
-  const activeStage = next === "waiting" ? "ready" : next;
+  const activeStage = current.stage ?? next;
   draw.hidden = activeStage !== "ready";
   for (const stage of stages) {
     if (stage.dataset.phase === activeStage) stage.setAttribute("aria-current", "step");
@@ -135,12 +139,24 @@ function setPhase(next, startAt = Date.now()) {
   }
 }
 
+function showSpeechPrompt() {
+  if (!speechPromptPending || document.hidden || resetDialog.open) return;
+
+  speechPromptPending = false;
+  speechDialog.returnValue = "";
+  speechDialog.showModal();
+}
+
 function updateTime() {
   const remaining = Math.max(0, deadline - Date.now());
   renderTime(remaining, phases[phase].seconds * 1000);
   if (remaining > 0) return;
-  if (phase === "prepare") setPhase("speak", deadline);
-  else if (phase === "speak") setPhase("done");
+  if (phase === "prepare") {
+    setPhase("awaitingSpeech");
+    showSpeechPrompt();
+  } else if (phase === "speak") {
+    setPhase("done");
+  }
 }
 
 function shuffleTopics() {
@@ -176,7 +192,10 @@ resetProgressButton.addEventListener("click", () => {
 });
 
 resetDialog.addEventListener("close", () => {
-  if (resetDialog.returnValue !== "reset") return;
+  if (resetDialog.returnValue !== "reset") {
+    showSpeechPrompt();
+    return;
+  }
 
   previousTopic = "";
   remainingTopics = [];
@@ -189,16 +208,22 @@ resetDialog.addEventListener("close", () => {
   draw.focus();
 });
 
+speechDialog.addEventListener("close", () => {
+  if (phase === "awaitingSpeech" && speechDialog.returnValue === "start") setPhase("speak");
+});
+
 draw.addEventListener("click", drawTopic);
 advance.addEventListener("click", () => {
   if (phase === "ready") setPhase("prepare");
-  else if (phase === "prepare") setPhase("speak");
+  else if (phase === "prepare" || phase === "awaitingSpeech") setPhase("speak");
   else if (phase === "speak") setPhase("done");
   else drawTopic();
 });
 
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && (phase === "prepare" || phase === "speak")) updateTime();
+  if (document.hidden) return;
+  if (phase === "prepare" || phase === "speak") updateTime();
+  showSpeechPrompt();
 });
 
 loadCustomTopics();
