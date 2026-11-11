@@ -153,7 +153,7 @@ button {
   cursor: pointer;
 }
 
-button:focus-visible {
+:is(button, input, summary):focus-visible {
   outline: 3px solid #dd8b59;
   outline-offset: 4px;
 }
@@ -181,6 +181,59 @@ button:focus-visible {
 .secondary:hover { background: #3a4939; }
 
 .secondary[hidden] { display: none; }
+
+.custom-topics {
+  width: min(100%, 35rem);
+  margin-top: 1rem;
+  border: 1px solid #e2dbca;
+  border-radius: 1rem;
+  background: #fffcf5;
+}
+
+.custom-topics summary {
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.custom-topics > p, .custom-topics form {
+  margin: 0 1rem 1rem;
+}
+
+.custom-topics p {
+  color: #53584e;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.custom-topics label {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.topic-entry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.topic-entry input {
+  flex: 1 1 12rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #9b988b;
+  border-radius: 0.75rem;
+  color: inherit;
+  background: #fff;
+  font: inherit;
+}
+
+.topic-entry button { width: auto; }
+
+#custom-topic-status { margin: 0.6rem 0 0; }
+
+#custom-topic-status:empty { margin: 0; }
 
 @media (max-width: 40rem) {
   .practice { padding-top: 1.5rem; }

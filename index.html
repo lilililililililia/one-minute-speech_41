@@ -40,6 +40,19 @@
       </section>
     </div>
 
+    <details class="custom-topics">
+      <summary>添加自己的题目</summary>
+      <p id="custom-topic-help">自定义题目保存在当前浏览器，也会参与随机抽题。</p>
+      <form id="custom-topic-form">
+        <label for="custom-topic">题目名称</label>
+        <div class="topic-entry">
+          <input id="custom-topic" type="text" maxlength="40" required autocomplete="off"
+            placeholder="输入一个概念或名词短语" aria-describedby="custom-topic-help custom-topic-status">
+          <button class="primary" type="submit">添加题目</button>
+        </div>
+        <p id="custom-topic-status" role="status"></p>
+      </form>
+    </details>
   </main>
 </body>
 </html>
