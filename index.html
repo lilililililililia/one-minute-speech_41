@@ -40,19 +40,33 @@
       </section>
     </div>
 
-    <details class="custom-topics">
-      <summary>添加自己的题目</summary>
-      <p id="custom-topic-help">自定义题目保存在当前浏览器，也会参与随机抽题。</p>
-      <form id="custom-topic-form">
-        <label for="custom-topic">题目名称</label>
-        <div class="topic-entry">
-          <input id="custom-topic" type="text" maxlength="40" required autocomplete="off"
-            placeholder="输入一个概念或名词短语" aria-describedby="custom-topic-help custom-topic-status">
-          <button class="primary" type="submit">添加题目</button>
+    <div class="practice-tools">
+      <details class="custom-topics">
+        <summary>添加自己的题目</summary>
+        <p id="custom-topic-help">自定义题目保存在当前浏览器，也会参与随机抽题。</p>
+        <form id="custom-topic-form">
+          <label for="custom-topic">题目名称</label>
+          <div class="topic-entry">
+            <input id="custom-topic" type="text" maxlength="40" required autocomplete="off"
+              placeholder="输入一个概念或名词短语" aria-describedby="custom-topic-help custom-topic-status">
+            <button class="primary" type="submit">添加题目</button>
+          </div>
+          <p id="custom-topic-status" role="status"></p>
+        </form>
+      </details>
+      <button id="reset-progress" class="quiet-button" type="button">重置抽题进度</button>
+    </div>
+
+    <dialog id="reset-dialog" class="reset-dialog" aria-labelledby="reset-title" aria-describedby="reset-description">
+      <form method="dialog">
+        <h2 id="reset-title">重置抽题进度？</h2>
+        <p id="reset-description">重置会结束当前练习，并让已抽过的题重新参与抽取。你添加的题目会保留。</p>
+        <div class="dialog-actions">
+          <button class="quiet-button" type="submit" value="cancel" autofocus>取消</button>
+          <button class="primary" type="submit" value="reset">确认重置</button>
         </div>
-        <p id="custom-topic-status" role="status"></p>
       </form>
-    </details>
+    </dialog>
   </main>
 </body>
 </html>
