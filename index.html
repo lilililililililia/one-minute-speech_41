@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="随机抽一个中文概念，准备 10 分钟，用自己的话讲 1 分钟。">
+  <title>一分钟即兴表达</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="topics.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="practice">
+    <header class="intro">
+      <h1>一分钟即兴表达</h1>
+      <p>抽一个概念，准备 10 分钟，用自己的话讲 1 分钟。</p>
+    </header>
+
+    <div class="practice-grid">
+      <section class="topic-card" aria-labelledby="topic-label">
+        <h2 id="topic-label">本轮话题</h2>
+        <p id="topic" aria-live="polite">准备好了吗？</p>
+        <button id="draw" class="secondary" type="button">随机抽题</button>
+      </section>
+
+      <section class="timer-card" aria-labelledby="phase">
+        <ol class="stages" aria-label="练习阶段">
+          <li data-phase="ready" aria-current="step">抽题</li>
+          <li data-phase="prepare">准备</li>
+          <li data-phase="speak">讲述</li>
+        </ol>
+        <div class="dial" id="dial">
+          <p class="phase" id="phase" aria-live="polite">等待抽题</p>
+          <p class="countdown" id="countdown" role="timer" aria-label="剩余时间">10:00</p>
+        </div>
+        <p id="hint" class="hint">准备 10 分钟，讲述 1 分钟</p>
+        <div class="actions">
+          <button id="advance" class="primary" type="button" disabled>开始准备</button>
+        </div>
+      </section>
+    </div>
+
+  </main>
+</body>
+</html>

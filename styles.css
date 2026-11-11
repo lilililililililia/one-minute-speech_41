@@ -1,0 +1,191 @@
+:root {
+  color-scheme: light;
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  color: #252b21;
+  background: #f4f0e7;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.practice {
+  width: min(100% - 2rem, 58rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 8vw, 5rem) 0 2rem;
+}
+
+.intro {
+  border-top: 4px solid #ad452b;
+  padding: 1.5rem 0 1.75rem;
+}
+
+.intro h1 {
+  font-family: "Noto Serif SC", "Songti SC", SimSun, serif;
+  font-size: clamp(2.15rem, 7vw, 4rem);
+  line-height: 1.12;
+  margin: 0 0 0.7rem;
+}
+
+.intro p, .hint {
+  color: #53584e;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.practice-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1rem;
+}
+
+.topic-card, .timer-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  padding: clamp(1.25rem, 5vw, 2rem);
+  border-radius: 1.4rem;
+}
+
+.topic-card {
+  align-items: flex-start;
+  color: #fcf6e8;
+  background: #293529;
+}
+
+.topic-card h2 {
+  margin: 0;
+  color: #e3c49a;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+#topic {
+  margin: auto 0;
+  padding: 0.5rem 0;
+  font-family: "Noto Serif SC", "Songti SC", SimSun, serif;
+  font-size: clamp(1.65rem, 4vw, 2.65rem);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.timer-card {
+  align-items: center;
+  background: #fffcf5;
+  border: 1px solid #e2dbca;
+}
+
+.stages {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.86rem;
+  color: #575e51;
+}
+
+.stages li {
+  padding: 0.3rem 0.15rem;
+  border-bottom: 2px solid transparent;
+}
+
+.stages [aria-current="step"] {
+  border-color: #ad452b;
+  color: #943a24;
+  font-weight: 700;
+}
+
+.dial {
+  --remaining: 100%;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-content: center;
+  width: min(100%, 12rem);
+  aspect-ratio: 1;
+  text-align: center;
+  border-radius: 50%;
+  background: conic-gradient(#ad452b var(--remaining), #e9e1d1 0);
+}
+
+.dial::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0.45rem;
+  border-radius: 50%;
+  background: #fffcf5;
+}
+
+.phase, .countdown { margin: 0; }
+
+.phase { color: #53584e; }
+
+.countdown {
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-size: clamp(2.55rem, 9vw, 3.3rem);
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.hint {
+  min-height: 1.6rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.actions { width: 100%; }
+
+button {
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.65rem 1.1rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 3px solid #dd8b59;
+  outline-offset: 4px;
+}
+
+.primary {
+  width: 100%;
+  color: #fff;
+  background: #9d3b26;
+}
+
+.primary:hover:not(:disabled) { background: #82301f; }
+
+.primary:disabled {
+  color: #4f5149;
+  background: #e7e2d7;
+  cursor: default;
+}
+
+.secondary {
+  color: inherit;
+  background: transparent;
+  border-color: #a7b2a2;
+}
+
+.secondary:hover { background: #3a4939; }
+
+.secondary[hidden] { display: none; }
+
+@media (max-width: 40rem) {
+  .practice { padding-top: 1.5rem; }
+  .intro { padding: 1.1rem 0 1.25rem; }
+  .practice-grid { grid-template-columns: 1fr; }
+  .topic-card, .timer-card { gap: 0.85rem; }
+  .dial { width: min(100%, 10.5rem); }
+}
